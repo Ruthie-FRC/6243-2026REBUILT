@@ -1,5 +1,5 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:4",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
   "postCreateCommand": "cd /opt && wget 'https://github.com/wpilibsuite/vscode-wpilib/releases/download/v2026.1.1/vscode-wpilib-2026.1.1.vsix'",
   "features": {
     "ghcr.io/devcontainers/features/desktop-lite:1": {}
