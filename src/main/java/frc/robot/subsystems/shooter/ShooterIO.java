@@ -1,45 +1,23 @@
 package frc.robot.subsystems.shooter;
 
-/**
- * ShooterIO
- *
- * <p>Hardware abstraction layer for the shooter. This interface is implemented by: - ShooterIOSim
- * (simulation) - ShooterIOReal (real robot, NOT included yet)
- *
- * <p>Shooter.java depends ONLY on this interface.
- */
+import org.littletonrobotics.junction.AutoLog;
+
+/** Hardware abstraction for the shooter. Only contains things that physically touch hardware. */
 public interface ShooterIO {
 
-  /**
-   * Sets the shooter target speed.
-   *
-   * @param velocity Target velocity (units defined by implementation)
-   * @param firingBoost Whether to apply extra feedforward / voltage
-   */
-  void setShooterSpeed(double velocity, boolean firingBoost);
+  /** Logged inputs for replay/sim */
+  @AutoLog
+  class ShooterIOInputs {
+    public double flywheelVelocityRadPerSec = 0.0;
+    public double feederCurrentAmps = 0.0;
+  }
 
-  /** Enables or disables the feeder */
-  void setFiring(boolean firing);
+  /** Update sensor inputs */
+  default void updateInputs(ShooterIOInputs inputs) {}
 
-  /**
-   * @return current shooter velocity
-   */
-  double getShooterVelocity();
+  /** Set flywheel voltage */
+  default void setFlywheelVoltage(double volts) {}
 
-  /**
-   * @return current drawn by feeder motor (or simulated equivalent)
-   */
-  double getFeederCurrent();
-
-  /** Checks if shooter is within tolerance of a target speed. Implementation defines tolerance. */
-  boolean isAtSpeed(double targetVelocity);
-
-  /** Called once per robot loop */
-  void periodic();
-
-  /**
-   * Exposes idle speed to Shooter.java without Shooter knowing tunables exist. This keeps Shooter
-   * logic clean and hardware-agnostic.
-   */
-  double getIdleSpeed();
+  /** Set feeder voltage */
+  default void setFeederVoltage(double volts) {}
 }
