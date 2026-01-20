@@ -7,8 +7,7 @@ import org.littletonrobotics.junction.Logger;
 public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged inputs =
-      new ShooterIOInputsAutoLogged();
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private final LoggedTunableNumber flywheelVoltage =
       new LoggedTunableNumber("Shooter/FlywheelVoltage", 8.0);
