@@ -1,25 +1,29 @@
 package frc.robot.subsystems.shooter;
 
-/** Simple physics-less shooter simulation. Exists only so commands and logging function in sim. */
 public class ShooterIOSim implements ShooterIO {
 
   private double flywheelVelocityRadPerSec = 0.0;
-  private double feederCurrentAmps = 0.0;
+  private double appliedFlywheelVoltage = 0.0;
+  private double appliedFeederVoltage = 0.0;
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
+    // Extremely simple fake physics:
+    // Voltage slowly pushes velocity toward a made-up max speed.
+    double targetVelocity = appliedFlywheelVoltage * 80.0; // FAKE scaling
+    flywheelVelocityRadPerSec += (targetVelocity - flywheelVelocityRadPerSec) * 0.1;
+
     inputs.flywheelVelocityRadPerSec = flywheelVelocityRadPerSec;
-    inputs.feederCurrentAmps = feederCurrentAmps;
+    inputs.feederCurrentAmps = Math.abs(appliedFeederVoltage) * 2.0; // FAKE current
   }
 
   @Override
   public void setFlywheelVoltage(double volts) {
-    // Extremely fake model: voltage -> velocity
-    flywheelVelocityRadPerSec = volts * 50.0;
+    appliedFlywheelVoltage = volts;
   }
 
   @Override
   public void setFeederVoltage(double volts) {
-    feederCurrentAmps = Math.abs(volts) * 2.0;
+    appliedFeederVoltage = volts;
   }
 }

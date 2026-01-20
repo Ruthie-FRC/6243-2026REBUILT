@@ -2,22 +2,21 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/** Hardware abstraction for the shooter. Only contains things that physically touch hardware. */
 public interface ShooterIO {
 
-  /** Logged inputs for replay/sim */
+  /** Container for all shooter sensor inputs (used for logging & replay). */
   @AutoLog
   class ShooterIOInputs {
     public double flywheelVelocityRadPerSec = 0.0;
     public double feederCurrentAmps = 0.0;
   }
 
-  /** Update sensor inputs */
+  /** Updates the input structure with the latest sensor values. */
   default void updateInputs(ShooterIOInputs inputs) {}
 
-  /** Set flywheel voltage */
+  /** Sets the flywheel motor voltage. */
   default void setFlywheelVoltage(double volts) {}
 
-  /** Set feeder voltage */
+  /** Sets the feeder motor voltage. */
   default void setFeederVoltage(double volts) {}
 }
