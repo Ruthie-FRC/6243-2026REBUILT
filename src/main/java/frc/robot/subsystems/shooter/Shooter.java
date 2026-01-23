@@ -9,8 +9,7 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
 
   // AdvantageKit-generated inputs container
-  private final ShooterIOInputsAutoLogged inputs =
-      new ShooterIOInputsAutoLogged();
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private final LoggedTunableNumber flywheelVoltage =
       new LoggedTunableNumber("Shooter/FlywheelVoltage", 8.0);

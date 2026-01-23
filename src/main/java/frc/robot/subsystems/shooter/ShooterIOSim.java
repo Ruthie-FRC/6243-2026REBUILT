@@ -10,8 +10,7 @@ public class ShooterIOSim implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     // Extremely simple fake physics
     double targetVelocity = appliedFlywheelVoltage * 80.0;
-    flywheelVelocityRadPerSec +=
-        (targetVelocity - flywheelVelocityRadPerSec) * 0.1;
+    flywheelVelocityRadPerSec += (targetVelocity - flywheelVelocityRadPerSec) * 0.1;
 
     inputs.flywheelVelocityRadPerSec = flywheelVelocityRadPerSec;
     inputs.feederCurrentAmps = Math.abs(appliedFeederVoltage) * 2.0;
