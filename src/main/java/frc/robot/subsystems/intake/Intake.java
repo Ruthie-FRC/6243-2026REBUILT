@@ -5,4 +5,4 @@
 package frc.robot.subsystems.intake;
 
 /** Add your docs here. */
-public class intake {}
+public class Intake {}
