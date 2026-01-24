@@ -4,19 +4,34 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ShooterIO {
 
-  /** Container for all shooter sensor inputs (logging + replay). */
+  /**
+   * All sensor data read from the shooter hardware.
+   * This should represent REAL motor feedback only.
+   */
   @AutoLog
   class ShooterIOInputs {
+    // Flywheel motor
     public double flywheelVelocityRadPerSec = 0.0;
+    public double flywheelCurrentAmps = 0.0;
+    public double flywheelTempCelsius = 0.0;
+    public boolean flywheelConnected = true;
+
+    // Feeder motor
     public double feederCurrentAmps = 0.0;
+    public double feederTempCelsius = 0.0;
+    public boolean feederConnected = true;
   }
 
-  /** Updates the input structure with the latest sensor values. */
+  /** Update all shooter sensor inputs */
   default void updateInputs(ShooterIOInputs inputs) {}
 
-  /** Sets the flywheel motor voltage. */
-  default void setFlywheelVoltage(double volts) {}
+  /**
+   * Set desired flywheel velocity.
+   * Closed-loop control should be implemented INSIDE the IO
+   * (SparkMax PID, Talon PID, or WPILib PID in sim).
+   */
+  default void setFlywheelVelocity(double radPerSec) {}
 
-  /** Sets the feeder motor voltage. */
+  /** Set feeder motor voltage (open-loop is fine) */
   default void setFeederVoltage(double volts) {}
 }

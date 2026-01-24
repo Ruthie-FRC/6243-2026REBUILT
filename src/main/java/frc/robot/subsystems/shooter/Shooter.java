@@ -1,6 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
@@ -14,44 +16,56 @@ public class Shooter extends SubsystemBase {
   // AdvantageKit-generated inputs container
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-  private final LoggedTunableNumber flywheelVoltage =
-      new LoggedTunableNumber("Shooter/FlywheelVoltage", 8.0);
+  // Tunables
+  private final LoggedTunableNumber targetVelocityRadPerSec =
+      new LoggedTunableNumber("Shooter/TargetVelocityRadPerSec", 400.0);
+
+  private final LoggedTunableNumber velocityToleranceRadPerSec =
+      new LoggedTunableNumber("Shooter/VelocityToleranceRadPerSec", 20.0);
 
   private final LoggedTunableNumber feederVoltage =
       new LoggedTunableNumber("Shooter/FeederVoltage", 6.0);
 
-  private final LoggedTunableNumber targetVelocityRadPerSec =
-      new LoggedTunableNumber("Shooter/TargetVelocityRadPerSec", 400.0);
+  // Alerts
+  private final Alert flywheelDisconnected =
+      new Alert("Shooter flywheel motor disconnected", AlertType.kError);
 
-  private final LoggedTunableNumber velocityTolerance =
-      new LoggedTunableNumber("Shooter/VelocityToleranceRadPerSec", 20.0);
+  private final Alert feederDisconnected =
+      new Alert("Shooter feeder motor disconnected", AlertType.kError);
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
+
+    // Hardware health monitoring
+    flywheelDisconnected.set(!inputs.flywheelConnected);
+    feederDisconnected.set(!inputs.feederConnected);
   }
 
+  /** Spin flywheel to target velocity (closed-loop handled in IO) */
   public void spinUp() {
-    io.setFlywheelVoltage(flywheelVoltage.get());
+    io.setFlywheelVelocity(targetVelocityRadPerSec.get());
     io.setFeederVoltage(0.0);
   }
 
+  /** Fire when at speed */
   public void shoot() {
-    io.setFlywheelVoltage(flywheelVoltage.get());
+    io.setFlywheelVelocity(targetVelocityRadPerSec.get());
     io.setFeederVoltage(atTargetVelocity() ? feederVoltage.get() : 0.0);
   }
 
+  /** Stop everything */
   public void stop() {
-    io.setFlywheelVoltage(0.0);
+    io.setFlywheelVelocity(0.0);
     io.setFeederVoltage(0.0);
   }
 
+  /** Check if flywheel is within tolerance */
   public boolean atTargetVelocity() {
     return MathUtil.isNear(
-        targetVelocityRadPerSec.get(), // expected value
-        inputs.flywheelVelocityRadPerSec, // actual value
-        velocityTolerance.get() // tolerance
-        );
+        targetVelocityRadPerSec.get(),
+        inputs.flywheelVelocityRadPerSec,
+        velocityToleranceRadPerSec.get());
   }
 }
