@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.TunerConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -63,8 +62,6 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
-        // a CANcoder
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -105,7 +102,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-
         break;
     }
 
@@ -171,11 +167,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    // Climb bindings
     m_codriverController.rightTrigger().whileTrue(m_ClimbSubsystem.climbUpCommand());
     m_codriverController.leftTrigger().whileTrue(m_ClimbSubsystem.climbDownCommand());
-  }
+
+    // Shooter binding
     m_codriverController.y().whileTrue(m_Shooters.shooterCommand());
-    }
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
