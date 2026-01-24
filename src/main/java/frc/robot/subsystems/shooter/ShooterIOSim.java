@@ -9,12 +9,11 @@ public class ShooterIOSim implements ShooterIO {
   private final FlywheelSim flywheelSim =
       new FlywheelSim(
           LinearSystemId.identifyVelocitySystem(
-              0.02,   // kV (tune later)
-              0.001   // kA (tune later)
-          ),
+              0.02, // kV (tune later)
+              0.001 // kA (tune later)
+              ),
           DCMotor.getNEO(1),
-          1.0
-      );
+          1.0);
 
   private double appliedFlywheelVoltage = 0.0;
   private double appliedFeederVoltage = 0.0;
@@ -24,15 +23,12 @@ public class ShooterIOSim implements ShooterIO {
     flywheelSim.setInput(appliedFlywheelVoltage);
     flywheelSim.update(0.020);
 
-    inputs.flywheelVelocityRadPerSec =
-        flywheelSim.getAngularVelocityRadPerSec();
-    inputs.flywheelCurrentAmps =
-        flywheelSim.getCurrentDrawAmps();
+    inputs.flywheelVelocityRadPerSec = flywheelSim.getAngularVelocityRadPerSec();
+    inputs.flywheelCurrentAmps = flywheelSim.getCurrentDrawAmps();
     inputs.flywheelTempCelsius = 30.0; // fake but stable
     inputs.flywheelConnected = true;
 
-    inputs.feederCurrentAmps =
-        Math.abs(appliedFeederVoltage) * 2.0;
+    inputs.feederCurrentAmps = Math.abs(appliedFeederVoltage) * 2.0;
     inputs.feederTempCelsius = 30.0;
     inputs.feederConnected = true;
   }
