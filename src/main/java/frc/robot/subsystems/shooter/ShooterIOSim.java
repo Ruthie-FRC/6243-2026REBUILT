@@ -1,19 +1,45 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+
 public class ShooterIOSim implements ShooterIO {
 
-  private double flywheelVelocityRadPerSec = 0.0;
+  // Identified flywheel model
+  private final FlywheelSim flywheelSim =
+      new FlywheelSim(
+          LinearSystemId.identifyVelocitySystem(
+              0.02,   // kV (volts per rad/s) — tune later
+              0.001   // kA (volts per rad/s^2) — tune later
+          ),
+          DCMotor.getNEO(1),
+          1.0 // gearing
+      );
+
   private double appliedFlywheelVoltage = 0.0;
   private double appliedFeederVoltage = 0.0;
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    // Extremely simple fake physics
-    double targetVelocity = appliedFlywheelVoltage * 80.0;
-    flywheelVelocityRadPerSec += (targetVelocity - flywheelVelocityRadPerSec) * 0.1;
+    // Apply motor voltage
+    flywheelSim.setInput(appliedFlywheelVoltage);
 
-    inputs.flywheelVelocityRadPerSec = flywheelVelocityRadPerSec;
+    // Advance simulation by 20ms
+    flywheelSim.update(0.020);
+
+    // Populate inputs for AdvantageKit
+    inputs.flywheelVelocityRadPerSec = flywheelSim.getAngularVelocityRadPerSec();
     inputs.feederCurrentAmps = Math.abs(appliedFeederVoltage) * 2.0;
+
+    // Simulate battery sag
+    RoboRioSim.setVInVoltage(
+        BatterySim.calculateDefaultBatteryLoadedVoltage(
+            flywheelSim.getCurrentDrawAmps()
+        )
+    );
   }
 
   @Override
