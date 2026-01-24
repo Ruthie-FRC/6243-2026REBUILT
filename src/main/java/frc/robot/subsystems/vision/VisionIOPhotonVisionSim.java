@@ -55,7 +55,7 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
      *
      * The following is a fully-commented-out alternative that disables both streams,
      * but still allows tag detection and pose simulation to work.
-     * 
+     *
      * It's not perfect, but it's much better than without.
      *
      * Uncomment to use this lightweight version:
