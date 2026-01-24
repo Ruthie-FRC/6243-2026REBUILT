@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.TunerConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.generated.TunerConstants;
+import frc.robot.subsystems.shooter.Shooters;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -47,6 +49,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final ClimbSubsystem m_ClimbSubsystem = new ClimbSubsystem();
+  private final Shooters m_Shooters = new Shooters();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -171,6 +174,8 @@ public class RobotContainer {
     m_codriverController.rightTrigger().whileTrue(m_ClimbSubsystem.climbUpCommand());
     m_codriverController.leftTrigger().whileTrue(m_ClimbSubsystem.climbDownCommand());
   }
+    m_codriverController.y().whileTrue(m_Shooters.shooterCommand());
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
