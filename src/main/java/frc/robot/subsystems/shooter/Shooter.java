@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.util.LoggedTunableNumber;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
@@ -47,7 +48,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean atTargetVelocity() {
-    return Math.abs(inputs.flywheelVelocityRadPerSec - targetVelocityRadPerSec.get())
-        < velocityTolerance.get();
+    return MathUtil.isNear(
+        targetVelocityRadPerSec.get(),       // expected value
+        inputs.flywheelVelocityRadPerSec,    // actual value
+        velocityTolerance.get()              // tolerance
+    );
   }
 }
