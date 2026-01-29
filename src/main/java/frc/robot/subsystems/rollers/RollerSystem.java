@@ -37,9 +37,6 @@ public class RollerSystem extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs(inputsName, inputs);
 
-    disconnected.set(
-        Robot.showHardwareAlerts() && !motorConnectedDebouncer.calculate(inputs.connected));
-
     // Run roller
     outputs.appliedVoltage = volts;
 
