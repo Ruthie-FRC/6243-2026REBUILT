@@ -1,9 +1,4 @@
 package frc.robot.subsystems.rollers;
-
-// TODO: if youre going to do theivery, do it right
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.Alert;
-import frc.robot.Robot;
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOOutputs;
 import frc.robot.util.FullSubsystem;
 import frc.robot.util.LoggedTracer;
@@ -17,10 +12,6 @@ public class RollerSystem extends FullSubsystem {
   protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
   private final RollerSystemIOOutputs outputs = new RollerSystemIOOutputs();
 
-  private final Debouncer motorConnectedDebouncer =
-      new Debouncer(0.5, Debouncer.DebounceType.kFalling);
-  private final Alert disconnected;
-
   @Setter private double volts = 0.0;
   @Setter private boolean brakeModeEnabled = true;
 
@@ -29,7 +20,6 @@ public class RollerSystem extends FullSubsystem {
     this.inputsName = inputsName;
     this.io = io;
 
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
   }
 
   @Override
