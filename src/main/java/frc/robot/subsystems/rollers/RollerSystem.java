@@ -2,21 +2,18 @@ package frc.robot.subsystems.rollers;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Alert;
-import lombok.Setter;
-
 import frc.robot.Robot;
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOOutputs;
 import frc.robot.util.FullSubsystem;
 import frc.robot.util.LoggedTracer;
-
+import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 
 public class RollerSystem extends FullSubsystem {
   private final String name;
   private final String inputsName;
   private final RollerSystemIO io;
-  protected final RollerSystemIOInputsAutoLogged inputs =
-      new RollerSystemIOInputsAutoLogged();
+  protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
   private final RollerSystemIOOutputs outputs = new RollerSystemIOOutputs();
 
   private final Debouncer motorConnectedDebouncer =
@@ -40,8 +37,7 @@ public class RollerSystem extends FullSubsystem {
     Logger.processInputs(inputsName, inputs);
 
     disconnected.set(
-        Robot.showHardwareAlerts()
-            && !motorConnectedDebouncer.calculate(inputs.connected));
+        Robot.showHardwareAlerts() && !motorConnectedDebouncer.calculate(inputs.connected));
 
     // Run roller
     outputs.appliedVoltage = volts;
