@@ -6,33 +6,11 @@
 // at the root directory of this project.
 
 package frc.robot;
-
-import edu.wpi.first.hal.AllianceStationID;
-import edu.wpi.first.math.MathShared;
-import edu.wpi.first.math.MathSharedStore;
-import edu.wpi.first.math.MathUsageId;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Watchdog;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import frc.robot.Constants.Mode;
 import frc.robot.util.FullSubsystem;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.VirtualSubsystem;
-import org.littletonrobotics.junction.AutoLogOutputManager;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -49,9 +27,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private static final double lowBatteryVoltage = 11.0;
-  private static final double lowBatteryDisabledTime = 2.0;
-
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
@@ -133,40 +108,8 @@ public class Robot extends LoggedRobot {
     FullSubsystem.runAllPeriodicAfterScheduler();
     LoggedTracer.record("PeriodicAfterScheduler");
 
-    // Print auto duration removed
-    if (autonomousCommand != null) {
-      if (!autonomousCommand.isScheduled() && !autoMessagePrinted) {
-        autoMessagePrinted = true;
-      }
-    }
-
-    // Low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-    }
-    if (RobotController.getBatteryVoltage() > 0.0
-        && RobotController.getBatteryVoltage() <= lowBatteryVoltage
-        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
-      lowBatteryAlert.set(true);
-      Leds.getGlobal().lowBatteryAlert = true;
-    }
-
-    // Clear shooting parameters
-    ShotCalculator.getInstance().clearShootingParameters();
-
-    // Update RobotContainer dashboard outputs
-    robotContainer.updateDashboardOutputs();
-
-    // Log Mechanism3d data
-    AlphaMechanism3d.getMeasured().log("Mechanism3d/Alpha");
-
     // Record cycle time
     LoggedTracer.record("RobotPeriodic");
-  }
-
-  /** Whether to display alerts related to hardware faults. */
-  public static boolean showHardwareAlerts() {
-    return Constants.getMode() != Mode.SIM && Timer.getTimestamp() > 30.0;
   }
 
   /** This function is called once when the robot is disabled. */
@@ -180,7 +123,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autoStart = Timer.getTimestamp();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
