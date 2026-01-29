@@ -32,18 +32,18 @@ public final class Constants {
   }
 
   public static boolean disableHAL = false;
-  
+
   public static void disableHAL() {
     disableHAL = true;
   }
 
-  /**checks that tuning mode is disabled before deploying code */
+  /** checks that tuning mode is disabled before deploying code */
   public static class CheckDeploy {
     public static void main(String... args) {
-    if (tuningMode) {
-      System.err.println("Cannot deploy: tuning mode is enabled.");
-      System.exit(1);
-    }
+      if (tuningMode) {
+        System.err.println("Cannot deploy: tuning mode is enabled.");
+        System.exit(1);
+      }
     }
   }
 

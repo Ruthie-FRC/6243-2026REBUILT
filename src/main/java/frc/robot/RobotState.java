@@ -17,12 +17,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.subsystems.drive.DriveConstants;
+import frc.robot.util.geometry.GeomUtil;
 import java.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.ExtensionMethod;
-import frc.robot.subsystems.drive.DriveConstants;
-import frc.robot.util.geometry.GeomUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 @ExtensionMethod({GeomUtil.class})
