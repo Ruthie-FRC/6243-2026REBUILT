@@ -1,4 +1,5 @@
 package frc.robot.subsystems.rollers;
+
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOOutputs;
 import frc.robot.util.FullSubsystem;
 import frc.robot.util.LoggedTracer;
@@ -19,7 +20,6 @@ public class RollerSystem extends FullSubsystem {
     this.name = name;
     this.inputsName = inputsName;
     this.io = io;
-
   }
 
   @Override
