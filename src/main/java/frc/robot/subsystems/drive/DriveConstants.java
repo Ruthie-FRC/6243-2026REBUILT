@@ -7,10 +7,6 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import frc.robot.Constants;
-
 public class DriveConstants {
   // MARK: - COMPBOT Constants
 
