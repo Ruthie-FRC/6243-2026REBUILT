@@ -45,10 +45,6 @@ public class LED extends SubsystemBase {
     this.intakeDown = intakeDown;
   }
 
-  public void toggleIntakeDown() {
-    intakeDown = !intakeDown;
-  }
-
   public void setHoodStowed(boolean hoodStowed) {
     this.hoodStowed = hoodStowed;
   }

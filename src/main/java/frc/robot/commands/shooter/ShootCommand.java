@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.RPM;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.leds.LED;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShotCalculator;
 
@@ -14,14 +15,29 @@ public class ShootCommand {
    *
    * @param shooter the Shooter subsystem
    * @param indexer the Indexer subsystem
+   * @param led the LED subsystem for invalid-shot feedback
    * @return a Command ready to be scheduled
    */
-  public static Command shoot(Shooter shooter, Indexer indexer) {
+  public static Command shoot(Shooter shooter, Indexer indexer, LED led) {
+    boolean[] invalidShotLatched = {false};
+
     return shooter
         .getFlywheel()
         .run(
             () -> {
               var shot = ShotCalculator.getInstance().calculateShot();
+
+              if (!shot.isValid()) {
+                // Trigger the flash once per new invalid-shot event, mirroring
+                // SnapToTargetCommand behaviour.
+                if (!invalidShotLatched[0]) {
+                  led.triggerInvalidShotFlash();
+                  invalidShotLatched[0] = true;
+                }
+              } else {
+                invalidShotLatched[0] = false;
+              }
+
               double targetRpm =
                   shot.isValid() ? shot.flywheelSpeedRPM() : ShotCalculator.flywheelIdleRPM.get();
 

@@ -16,7 +16,7 @@ public class Intake {
   @Getter private final IntakeRollerSubsystem roller;
   @Getter private final Slapdown slap;
 
-  private boolean isDeployed = false;
+  private boolean deployed = false;
 
   public Intake(CANBus bus) {
     switch (Constants.currentMode) {
@@ -72,30 +72,40 @@ public class Intake {
     return slap.retractCommand();
   }
 
+  /** Returns true when the intake slapdown is in (or last commanded to) the deployed position. */
+  public boolean isDeployed() {
+    return deployed;
+  }
+
   /** Deploy intake (slap down only). */
   public Command deploy() {
-    return extendSlap();
+    return Commands.runOnce(() -> deployed = true).andThen(extendSlap());
   }
 
   /** Retract intake (slap up + stop roller). */
   public Command retract() {
-    return Commands.parallel(stopRoller(), retractSlap());
+    return Commands.runOnce(() -> deployed = false)
+        .andThen(Commands.parallel(stopRoller(), retractSlap()));
   }
 
-  /** Toggle intake up/down. */
+  /**
+   * Toggle between deployed and retracted. Pressing once deploys the intake; pressing again
+   * retracts it. The currently-running deploy/retract command is interrupted and replaced.
+   */
   public Command toggle() {
-    return Commands.runOnce(() -> isDeployed = !isDeployed)
-        .andThen(Commands.either(deploy(), retract(), () -> isDeployed));
+    return Commands.either(deploy(), retract(), () -> !deployed);
   }
 
-  /** Intake IN (forward + ensure deployed). */
+  /** Intake IN (forward + ensure deployed). Marks the intake as deployed while running. */
   public Command intakeIn() {
-    return Commands.parallel(runRollerForward(), extendSlap());
+    return Commands.runOnce(() -> deployed = true)
+        .andThen(Commands.parallel(runRollerForward(), extendSlap()));
   }
 
-  /** Intake OUT (reverse + ensure deployed). */
+  /** Intake OUT (reverse + ensure deployed). Marks the intake as deployed while running. */
   public Command intakeOut() {
-    return Commands.parallel(runRollerReverse(), extendSlap());
+    return Commands.runOnce(() -> deployed = true)
+        .andThen(Commands.parallel(runRollerReverse(), extendSlap()));
   }
 
   /** Returns true if any intake motor is disconnected. */

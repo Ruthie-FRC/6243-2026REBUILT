@@ -190,13 +190,11 @@ public class RobotContainer {
 
     // Driver: Hood stow (X) - on press, move to stow angle if currently below it
     m_drivecontroller.x().onTrue(shooter.getHood().stowCommand());
-    m_drivecontroller.x().onTrue(Commands.runOnce(() -> led.setHoodStowed(true)));
 
     //  DRIVER INTAKE
 
-    // Toggle intake up/down (B)
-    m_drivecontroller.b().toggleOnTrue(intake.deploy());
-    m_drivecontroller.b().onTrue(Commands.runOnce(led::toggleIntakeDown));
+    // Toggle intake up/down (B): first press deploys, second press retracts
+    m_drivecontroller.b().onTrue(intake.toggle());
 
     // Hold to intake IN (left bumper)
     m_drivecontroller.leftBumper().whileTrue(intake.intakeIn());
@@ -230,9 +228,8 @@ public class RobotContainer {
     m_codriverController.a().onTrue(Commands.runOnce(() -> led.setAutoAlignActive(true)));
     m_codriverController.a().onFalse(Commands.runOnce(() -> led.setAutoAlignActive(false)));
 
-    // Intake toggle (left bumper)
-    m_codriverController.leftBumper().toggleOnTrue(intake.deploy());
-    m_codriverController.leftBumper().onTrue(Commands.runOnce(led::toggleIntakeDown));
+    // Intake toggle (left bumper): first press deploys, second press retracts
+    m_codriverController.leftBumper().onTrue(intake.toggle());
 
     // Beach alert (Y hold)
     m_codriverController.y().onTrue(Commands.runOnce(() -> led.setBeachAlertActive(true)));
@@ -247,7 +244,7 @@ public class RobotContainer {
     // Shoot / unload (right bumper hold)
     m_codriverController
         .rightBumper()
-        .whileTrue(frc.robot.commands.shooter.ShootCommand.shoot(shooter, indexer));
+        .whileTrue(frc.robot.commands.shooter.ShootCommand.shoot(shooter, indexer, led));
 
     // Keep high-priority motor disconnect alert updated continuously.
     led.setDefaultCommand(
@@ -265,6 +262,7 @@ public class RobotContainer {
                       || indexer.hasDisconnectedMotor()
                       || shooter.hasDisconnectedMotor()
                       || climb.hasDisconnectedMotor());
+              led.setIntakeDown(intake.isDeployed());
               led.setHoodStowed(shooter.getHood().getAngle().getDegrees() >= 69.0);
             }));
   }
