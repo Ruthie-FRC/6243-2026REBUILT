@@ -205,8 +205,10 @@ public class RobotContainer {
 
     // CODRIVER
 
-    // indexer unclog (right trigger hold)
-    m_codriverController.rightTrigger().whileTrue(indexer.unclog());
+    // Right trigger - spin the flywheel to 3500 RPM
+    m_codriverController
+        .rightTrigger()
+        .whileTrue(shooter.getFlywheel().manualShoot(() -> 3500.0 / 60.0));
 
     // Manual flywheel control: use left stick Y as the flywheel manual input (continuous
     // while teleop). This allows the co-driver to control flywheel and hood together.

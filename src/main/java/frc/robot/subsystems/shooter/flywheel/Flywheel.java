@@ -3,7 +3,13 @@ package frc.robot.subsystems.shooter.flywheel;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,6 +46,19 @@ public class Flywheel extends SubsystemBase {
    */
   public Flywheel(LoggedTalonFX leaderMotor) {
     this.leaderMotor = leaderMotor;
+    var config =
+        new TalonFXConfiguration()
+            .withSlot0(new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKV(0.12))
+            .withMotionMagic(
+                new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(100)
+                    .withMotionMagicAcceleration(200))
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(80)
+                    .withStatorCurrentLimitEnable(true));
+    leaderMotor.withConfig(config);
     setDefaultCommand(aimCommand());
   }
 
