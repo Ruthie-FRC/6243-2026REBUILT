@@ -14,9 +14,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.shooter.ShotCalculator;
 import frc.robot.util.LoggedTalon.TalonFX.LoggedTalonFX;
 import frc.robot.util.LoggedTunableMeasure;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -32,13 +32,14 @@ public class Flywheel extends SubsystemBase {
   private final MotionMagicVelocityTorqueCurrentFOC mmControl =
       new MotionMagicVelocityTorqueCurrentFOC(0);
 
-  // Store targets explicitly (this is the important part you were missing)
   private AngularVelocity targetVelocity = RotationsPerSecond.of(0);
 
   @Getter @AutoLogOutput private boolean atSetpoint = false;
 
   private final LoggedTunableMeasure<MutAngularVelocity> tolerance =
       new LoggedTunableMeasure<>("Flywheel/Tolerance", RPM.mutable(5));
+  private final LoggedTunableNumber targetRPM =
+      new LoggedTunableNumber("Flywheel/TargetRPM", 3000, "rpm");
 
   /**
    * Construct a Flywheel that commands a single leader motor. Any followers should be configured on
@@ -58,26 +59,13 @@ public class Flywheel extends SubsystemBase {
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(80)
                     .withStatorCurrentLimitEnable(true));
-    leaderMotor.withConfig(config);
-    setDefaultCommand(aimCommand());
+    leaderMotor.withConfig(config).withPIDTunable(config.Slot0);
+    setDefaultCommand(run(() -> setSetpoints(RPM.of(targetRPM.get()))));
   }
 
   public void setSetpoints(AngularVelocity velocity) {
     targetVelocity = velocity;
     leaderMotor.setControl(mmControl.withVelocity(velocity));
-  }
-
-  public Command aimCommand() {
-    return run(
-        () -> {
-          var shot = ShotCalculator.getInstance().calculateShot();
-
-          // Stay at idle when out of range so recovery to a valid shot is quick.
-          double speed =
-              shot.isValid() ? shot.flywheelSpeedRPM() : ShotCalculator.flywheelIdleRPM.get();
-
-          setSetpoints(RPM.of(speed));
-        });
   }
 
   /** Manual control command for teleop: supplier should provide a target velocity (rot/s). */
@@ -93,25 +81,17 @@ public class Flywheel extends SubsystemBase {
   public void periodic() {
     leaderMotor.periodic();
 
-    // Log target and actual RPM for diagnostics
-    try {
-      Logger.recordOutput("Flywheel/TargetRPM", targetVelocity.in(RPM));
-      Logger.recordOutput("Flywheel/ActualRPM", leaderMotor.getVelocity().in(RPM));
-    } catch (Exception ignored) {
-      // Defensive: don't let logging break control loop
-    }
+    Logger.recordOutput("Flywheel/TargetRPM", targetVelocity.in(RPM));
+    Logger.recordOutput("Flywheel/ActualRPM", leaderMotor.getVelocity().in(RPM));
 
     atSetpoint =
         Math.abs(
                 leaderMotor.getVelocity().in(RotationsPerSecond)
                     - targetVelocity.in(RotationsPerSecond))
             < tolerance.get().in(RotationsPerSecond);
-
-    // Clear AFTER everything uses the cached value
-    ShotCalculator.getInstance().clearCache();
   }
 
-  /** Returns the current flywheel velocity in units consistent with ShotCalculator. */
+  /** Returns the current flywheel velocity in rotations per second. */
   public double getVelocity() {
     return leaderMotor.getVelocity().in(RotationsPerSecond);
   }

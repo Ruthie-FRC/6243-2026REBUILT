@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.shooter.ShotCalculator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -110,52 +109,6 @@ public class DriveCommands {
               double omega =
                   angleController.calculate(
                       drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
-
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
-            },
-            drive)
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
-  }
-
-  /** SNAP TO TARGET USING APRILTAG + SHOT CALCULATOR */
-  public static Command snapToShotTarget(Drive drive) {
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            ANGLE_KP,
-            0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    return Commands.run(
-            () -> {
-              var shot = ShotCalculator.getInstance().calculateShot();
-              if (!shot.isValid()) return;
-
-              double xSpeed = 0.0;
-              double ySpeed = 0.0;
-
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(), shot.robotYaw().getRadians());
-
-              Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSpeed, ySpeed);
 
               ChassisSpeeds speeds =
                   new ChassisSpeeds(

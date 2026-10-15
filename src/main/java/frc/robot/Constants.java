@@ -18,7 +18,7 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-  public static final boolean tuningMode = false;
+  public static final boolean tuningMode = true;
 
   public static final double loopPeriodSecs = 0.02;
 
@@ -47,18 +47,5 @@ public final class Constants {
         System.exit(1);
       }
     }
-  }
-
-  public static class IdConstants {
-    public static final int SHOOTER_ID = 17;
-  }
-
-  public static class SpeedConstants {
-    public static final double SHOOTER_SPEED = -0.6;
-  }
-
-  public static class LEDConstants {
-    public static final int PWM_PORT = 0;
-    public static final int LED_COUNT = 60; // TODO: update
   }
 }
