@@ -14,7 +14,7 @@ import frc.robot.subsystems.shooter.Shooter;
 
 /** Minimal robot wiring for motor and PID bring-up. */
 public class RobotContainer {
-  private final CANBus rioCAN = new CANBus("rio");
+  private final CANBus rioCAN = new CANBus(Constants.MECHANISM_CAN_BUS);
   private final Drive drive;
   private final Shooter shooter;
   private final CommandXboxController controller = new CommandXboxController(0);

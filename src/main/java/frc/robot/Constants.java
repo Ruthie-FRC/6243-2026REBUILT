@@ -22,6 +22,19 @@ public final class Constants {
 
   public static final double loopPeriodSecs = 0.02;
 
+  public static final String MECHANISM_CAN_BUS = "rio";
+
+  /** CAN IDs for the motors used by this bring-up program. */
+  public static final class CanIds {
+    private CanIds() {}
+
+    /** The commanded flywheel motor. */
+    public static final int FLYWHEEL_LEADER = 12;
+
+    /** The flywheel motor following {@link #FLYWHEEL_LEADER}. */
+    public static final int FLYWHEEL_FOLLOWER = 11;
+  }
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,

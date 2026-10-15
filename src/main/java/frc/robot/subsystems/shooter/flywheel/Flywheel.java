@@ -24,9 +24,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Flywheel extends SubsystemBase {
 
-  // Single leader motor. Followers (if any) should be configured at the LoggedTalon
-  // construction level using PhoenixTalonFollower so the CTRE hardware handles
-  // aligning follower outputs.
+  // This object commands the leader. The follower is configured on the leader's
+  // LoggedTalon so CTRE handles follower synchronization.
   private final LoggedTalonFX leaderMotor;
 
   private final MotionMagicVelocityTorqueCurrentFOC mmControl =
@@ -41,10 +40,7 @@ public class Flywheel extends SubsystemBase {
   private final LoggedTunableNumber targetRPM =
       new LoggedTunableNumber("Flywheel/TargetRPM", 3000, "rpm");
 
-  /**
-   * Construct a Flywheel that commands a single leader motor. Any followers should be configured on
-   * the LoggedTalon implementation (see {@code PhoenixTalonFollower}).
-   */
+  /** Construct a flywheel that commands its leader motor. */
   public Flywheel(LoggedTalonFX leaderMotor) {
     this.leaderMotor = leaderMotor;
     var config =

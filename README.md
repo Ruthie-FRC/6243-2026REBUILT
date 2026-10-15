@@ -5,12 +5,28 @@ drivetrain and flywheel motors. The runtime contains:
 
 - Four-module swerve drive controlled by Xbox controller port `0`
 - One Talon FX flywheel leader on RIO CAN ID `12`
-- One CTRE follower on RIO CAN ID `11`
+- One CTRE follower on RIO CAN ID `11`, configured in Phoenix as opposed
 - Phoenix 6 closed-loop velocity control
 - AdvantageKit logging and live PID tuning
 
 Vision, LEDs, intake, indexer, hood control, autonomous shooting, and shot
 calculation are not part of this bring-up program.
+
+## CAN ID map
+
+The mechanism motors use the RIO CAN bus (`rio`). The flywheel is one
+closed-loop pair: only the leader receives velocity commands from this code;
+the follower mirrors the leader through CTRE Phoenix follower configuration.
+
+| Device | Role | CAN bus | CAN ID | Code name |
+| --- | --- | --- | ---: | --- |
+| Flywheel motor | **Leader / commanded** | `rio` | `12` | `FlywheelLeader` |
+| Flywheel motor | **Follower / mirrored** | `rio` | `11` | CTRE follower of ID `12` |
+
+The IDs are defined in [`Constants.java`](src/main/java/frc/robot/Constants.java)
+as `Constants.CanIds.FLYWHEEL_LEADER` and
+`Constants.CanIds.FLYWHEEL_FOLLOWER`. Do not command the follower directly; it
+must remain configured as a follower of CAN ID `12`.
 
 ## Controls
 
@@ -29,9 +45,9 @@ Its default target is `3000 RPM`.
 `Constants.tuningMode` is enabled. Tune values from the `/Tuning` NetworkTables
 table using AdvantageScope or another NetworkTables client:
 
-- `/Tuning/FlywheelRight/kP`
-- `/Tuning/FlywheelRight/kI`
-- `/Tuning/FlywheelRight/kD`
+- `/Tuning/FlywheelLeader/kP`
+- `/Tuning/FlywheelLeader/kI`
+- `/Tuning/FlywheelLeader/kD`
 - `/Tuning/Flywheel/TargetRPM`
 
 The actual and requested flywheel speeds are logged as

@@ -10,31 +10,31 @@ import frc.robot.util.LoggedTalon.TalonFX.PhoenixTalonFX;
 import frc.robot.util.LoggedTalon.TalonFX.TalonFXFlywheelSim;
 import lombok.Getter;
 
-/** Minimal flywheel test subsystem. */
+/** Minimal flywheel test subsystem with one leader and one CTRE follower. */
 public class Shooter {
   @Getter private final Flywheel flywheel;
 
   public Shooter(CANBus bus) {
+    PhoenixTalonFollower follower =
+        new PhoenixTalonFollower(Constants.CanIds.FLYWHEEL_FOLLOWER, MotorAlignmentValue.Opposed);
+
     switch (Constants.currentMode) {
       case REAL ->
           flywheel =
               new Flywheel(
                   new PhoenixTalonFX(
-                      12,
-                      bus,
-                      "FlywheelRight",
-                      new PhoenixTalonFollower(11, MotorAlignmentValue.Opposed)));
+                      Constants.CanIds.FLYWHEEL_LEADER, bus, "FlywheelLeader", follower));
       case SIM ->
           flywheel =
               new Flywheel(
                   new TalonFXFlywheelSim(
-                      12,
+                      Constants.CanIds.FLYWHEEL_LEADER,
                       bus,
-                      "FlywheelRight",
+                      "FlywheelLeader",
                       0.0007567661,
                       1 / 1.25,
-                      new PhoenixTalonFollower(11, MotorAlignmentValue.Opposed)));
-      default -> flywheel = new Flywheel(new NoOppTalonFX("FlywheelRight", 1));
+                      follower));
+      default -> flywheel = new Flywheel(new NoOppTalonFX("FlywheelLeader", 1));
     }
   }
 
